@@ -15,6 +15,8 @@ export class Voter {
     @Property()
     public ballotId: string;
 
+    // zat5yhj0gphpy7fnubzed
+
     constructor(voterId: string, areaId: number) {
         this.voterId = voterId;
         this.areaId = areaId;

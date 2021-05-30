@@ -182,8 +182,7 @@ export class ElectionContract extends Contract {
     @Transaction()
     @Returns('string')
     async createVoter(ctx: Context, voterId: string, areaId: number,): Promise<string> {
-        // query state for elections
-        console.log(voterId, areaId);
+        // query state for election
         const currElections = JSON.parse(await this.queryByObjectType(ctx, 'election'));
         if (currElections.length === 0) {
             // tslint:disable-next-line:no-shadowed-variable
@@ -201,8 +200,9 @@ export class ElectionContract extends Contract {
         //
         //
         // // generate ballot with the given votableItems
-        await this.createBallot(ctx, newVoter.voterId, currElections[0].electionId);
-        //
+        const ballot: Ballot = await this.createBallot(ctx, currElections[0].electionId, newVoter.voterId);
+        newVoter.ballotId = ballot.ballotId;
+        await ctx.stub.putState(newVoter.voterId, Buffer.from(JSON.stringify(newVoter)));
         const response: string = `voter with voterId ${newVoter.voterId} is updated in the world state`;
         return response;
     }
@@ -213,14 +213,15 @@ export class ElectionContract extends Contract {
     async castVote(ctx: Context, picked: string, electionId: string, voterId: string): Promise<string> {
         // picked(candidate) electionId,voterId
         // get the political party the voter voted for, also the key
-        const candidatId = picked;
         // check to make sure the election exists
         const electionExists = await this.myAssetExists(ctx, electionId);
         if (electionExists) {
             // make sure we have an election
+            // get elction and voter
             const electionAsBytes = await ctx.stub.getState(electionId);
             // @ts-ignore
             const election = await JSON.parse(electionAsBytes);
+            console.log('this is voter id', voterId);
             const voterAsBytes = await ctx.stub.getState(voterId);
             // @ts-ignore
             const voter = await JSON.parse(voterAsBytes);
@@ -234,14 +235,18 @@ export class ElectionContract extends Contract {
             // check the date of the election, to make sure the election is still open
             const currentTime = await new Date(2020, 11, 3);
 
-            // parse date objects
+            const startDateAray = election.startDate.split('/');
+            const endDateAray = election.endDate.split('/');
+            // @ts-ignore
+            const electionStart = Date.parse(await new Date(+startDateAray[0], +startDateAray[1], +startDateAray[2]));
+            // @ts-ignore
+            const electionEnd = Date.parse(await new Date(+endDateAray[0], +endDateAray[1], +endDateAray[2]));
             // @ts-ignore
             const parsedCurrentTime = Date.parse(currentTime);
-            const electionStart = await Date.parse(election.startDate);
-            const electionEnd = await Date.parse(election.endDate);
-
-            // only allow vote if the election has started
-            if (parsedCurrentTime >= electionStart && parsedCurrentTime < electionEnd) {
+            console.log('current time', parsedCurrentTime);
+            console.log('start date', electionStart);
+            console.log('end date', electionEnd);
+            if (parsedCurrentTime <= electionStart && parsedCurrentTime < electionEnd && electionStart < electionEnd) {
 
                 const candidatExists = await this.myAssetExists(ctx, picked);
                 if (!candidatExists) {
@@ -262,12 +267,13 @@ export class ElectionContract extends Contract {
 
                 // update the state with the new vote count
                 const result = await ctx.stub.putState(picked, Buffer.from(JSON.stringify(candidat)));
-                console.log(result);
+                console.log('result', result);
 
                 // make sure this voter cannot vote again!
                 voter.ballotCast = true;
                 voter.picked = {};
                 voter.picked = picked;
+                voter.voted = true;
 
                 // update state to say that this voter has voted, and who they picked
                 const response = await ctx.stub.putState(voter.voterId, Buffer.from(JSON.stringify(voter)));
@@ -275,7 +281,6 @@ export class ElectionContract extends Contract {
                 return voter;
 
             } else {
-
                 const response = 'the election is not open now!';
                 return response;
             }
@@ -286,35 +291,46 @@ export class ElectionContract extends Contract {
         }
     }
 
-    /*
-        @Transaction()
-        @Returns('Ballot')
-         async createBallot(ctx:Context, voterId:string, electionId): Promise<Ballot> {
-
-            let voter: Voter = await this.readMyAsset(ctx, voterId);
-            if (voter === null) {
-                throw new Error(`The voter ${voterId} does not exist`);
-
-            }
-            let candidats: Candidat[] = await this.getAllCandidatsByArea(ctx, voter.areaId);
-            if (candidats.length === 0) {
-                throw new Error(`The list of candidats area  ${voter.areaId} does not exist`);
-            }
-
-            let ballot: Ballot = new Ballot(ctx, candidats, electionId);
-            voter.ballot = ballot;
-            let buffer: Buffer = Buffer.from(JSON.stringify(voter));
-            await ctx.stub.putState(voterId, buffer);
-
-            return ballot;
-
+    @Transaction(false)
+    @Returns('Candidat[]')
+    async voterCanVoteListCandidat(ctx: Context, voterId: string): Promise<Candidat[] | string> {
+        const voterAsBytes = await ctx.stub.getState(voterId);
+        // @ts-ignore
+        const voter: Voter = await JSON.parse(voterAsBytes) as Voter;
+        console.log('this is voter', voter);
+        const ballotAsBytes = await ctx.stub.getState(voter.ballotId);
+        // @ts-ignore
+        const ballot: Ballot = await JSON.parse(ballotAsBytes) as Ballot;
+        console.log('ballot', ballot);
+        const candidats: Candidat[] = await this.getAllCandidatsByArea(ctx, voter.areaId) as Candidat[];
+        if (!ballot.ballotCast) {
+            return 'voter can\'t vote';
         }
+        console.log(`all candidates can voted by ${voterId}`, candidats);
+        return candidats;
+    }
 
+    @Transaction()
+    @Returns('string')
+    async deleteState(ctx: Context, key: string): Promise<string> {
+        await ctx.stub.deleteState(key);
+        return 'work';
+    }
 
-
-
-
-        */
+    @Transaction()
+    @Returns('Ballot')
+    async setVoterStatus(ctx: Context, voterId: string, status: boolean): Promise<Ballot> {
+        const voterAsBytes = await ctx.stub.getState(voterId);
+        // @ts-ignore
+        const voter: Voter = await JSON.parse(voterAsBytes) as Voter;
+        console.log('this is voter', voter);
+        const ballotAsBytes = await ctx.stub.getState(voter.ballotId);
+        // @ts-ignore
+        const ballot: Ballot = await JSON.parse(ballotAsBytes) as Ballot;
+        ballot.ballotCast = status;
+        await ctx.stub.putState(ballot.ballotId, Buffer.from(JSON.stringify(ballot)));
+        return ballot;
+    }
 
 
 }
