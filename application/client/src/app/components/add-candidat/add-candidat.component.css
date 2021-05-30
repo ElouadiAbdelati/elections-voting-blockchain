@@ -1,0 +1,24 @@
+/* .example-container .mat-form-field + .mat-form-field {
+    margin-left: 8px;
+  } */
+  .example-card{
+    background-color:var(--main-bg-color);
+  }
+  .form-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-container > * {
+    width: 100%;
+  }
+  .title-principal{
+    color: var(--text-color);
+    text-align: center;
+    margin-top: 15px;
+  }
+.title-secondary{
+  color: var(--text-color-secondary);
+  text-align: center;
+  margin-top: 15px;
+}

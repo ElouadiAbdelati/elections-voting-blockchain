@@ -1,0 +1,57 @@
+<mat-tab-group>
+    <mat-tab label="Nationale">
+
+        <main>
+            <div class="title">
+                <h2>Résultats des élections nationale</h2>
+            </div>
+
+            <div class="chart-col">
+                <div style="position: absolute; top: 50px; left: 50%; margin-left: -345px; bottom: 50px">
+                    <ngx-charts-advanced-pie-chart [view]="[width, height]" [scheme]="colorScheme" [results]="data"
+                        [gradient]="gradient" (select)="onSelect($event)" (activate)="onActivate($event)"
+                        (deactivate)="onDeactivate($event)">
+                    </ngx-charts-advanced-pie-chart>
+                </div>
+            </div>
+        </main>
+
+    </mat-tab>
+
+    <mat-tab label="Régionale">
+
+        <main>
+
+            <div style="text-align: center;">
+
+                <div class="title">
+                    <h2>Résultats des élections régionale</h2>
+                </div>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>Veuillez choisir une région</mat-label>
+                    <mat-select (selectionChange)="onChange($event)">
+                        <mat-option *ngFor="let region of regions" [value]="region.value">
+                            {{region.viewValue}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+            </div>
+
+            <div class="chart-col">
+                <div style="position: absolute; top: 50px; left: 50%; margin-left: -345px; bottom: 50px"
+                    [ngSwitch]="regionSelected">
+                    <div *ngSwitchCase="false"></div>
+                    <div *ngSwitchCase="true">
+                        <ngx-charts-advanced-pie-chart [view]="[width, height]" [scheme]="colorScheme"
+                            [results]="regionData" [gradient]="gradient" (select)="onSelect($event)"
+                            (activate)="onActivate($event)" (deactivate)="onDeactivate($event)">
+                        </ngx-charts-advanced-pie-chart>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </mat-tab>
+</mat-tab-group>

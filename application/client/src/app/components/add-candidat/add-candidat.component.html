@@ -1,0 +1,51 @@
+<div id="contact" class="container">
+    <div class="row d-flex justify-content-between">
+        <div class="col-md-12">
+            <h1 class="title-principal">Ajouter un nouveau candidat</h1>
+            <p class="lead title-secondary">Bowred By Blockchain </p>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <div class="col-md-12">
+            <mat-card class="example-card mt-2">
+                <mat-card-content>
+                    <form #f="ngForm" class="form-container">
+                        <mat-form-field>
+                            <input ngModel #parti="ngModel" name="parti" required matInput placeholder="Parti">
+                            <div *ngIf="parti.invalid && parti.touched">
+                                <mat-error *ngIf="parti.errors?.required">Parti est obligatoire !!</mat-error>
+                            </div>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input ngModel #nom="ngModel" name="nom" required matInput placeholder="Nom">
+                            <div *ngIf="nom.invalid && nom.touched">
+                                <mat-error *ngIf="nom.errors?.required">Nom est obligatoire !!</mat-error>
+                            </div>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <input ngModel #prenom="ngModel" name="prenom" required matInput placeholder="Prenom">
+                            <div *ngIf="prenom.invalid && prenom.touched">
+                                <mat-error *ngIf="prenom.errors?.required">prenom est obligatoire !!</mat-error>
+                            </div>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <textarea ngModel #description="ngModel" name="description" matInput
+                                placeholder="Description"></textarea>
+                        </mat-form-field>
+                        <mat-form-field>
+                            <mat-select ngModel #region="ngModel" name="region" required placeholder="Region">
+                                <mat-option *ngFor="let region of regions" value="region">{{region}}</mat-option>
+                            </mat-select>
+                            <div *ngIf="region.invalid && region.touched">
+                                <mat-error *ngIf="region.errors?.required">Merci de choisir une region !!</mat-error>
+                            </div>
+                        </mat-form-field>
+                    </form>
+                </mat-card-content>
+                <button (click)="submitForm(f)" class="btn btn-primary" [disabled]="f.invalid" type="button" mdbBtn
+                    color="primary" mdbWavesEffect>Send
+                    <i class="fas fa-paper-plane"></i></button>
+            </mat-card>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,44 @@
+[
+    {
+        "transactionName": "voteExists",
+        "transactionLabel": "A test voteExists transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "createVote",
+        "transactionLabel": "A test createVote transaction",
+        "arguments": [
+            "001",
+            "some value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "readVote",
+        "transactionLabel": "A test readVote transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "updateVote",
+        "transactionLabel": "A test updateVote transaction",
+        "arguments": [
+            "001",
+            "some other value"
+        ],
+        "transientData": {}
+    },
+    {
+        "transactionName": "deleteVote",
+        "transactionLabel": "A test deleteVote transaction",
+        "arguments": [
+            "001"
+        ],
+        "transientData": {}
+    }
+]

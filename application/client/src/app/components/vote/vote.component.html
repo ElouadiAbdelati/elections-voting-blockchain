@@ -1,0 +1,193 @@
+<div class="container main">
+  <mat-horizontal-stepper>
+
+    <mat-step label="Identification" [editable]="false">
+      <div class="card m-3">
+        <h5 class="card-header">Identification</h5>
+        <div class="card-body">
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div class="form-row">
+              <div class="row  ">
+                <mat-form-field class="col-6">
+                  <mat-label>Nom</mat-label>
+                  <input matInput type="text" placeholder="Votre nom"  formControlName="nom"
+                    [ngClass]="{ 'is-invalid': submitted && f.nom.errors }" required>
+
+                </mat-form-field>
+
+                <mat-form-field class="col-6">
+                  <mat-label>Prenom</mat-label>
+                  <input matInput type="text" placeholder="Votre prenom" formControlName="prenom"
+                    [ngClass]="{ 'is-invalid': submitted && f.prenom.errors }" required>
+
+                </mat-form-field>
+
+              </div>
+            </div>
+            <div class="row">
+
+              <mat-form-field class="col-6">
+                <mat-label>CIN</mat-label>
+                <input matInput type="text" placeholder="Votre cin" formControlName="CIN"
+                  [ngClass]="{ 'is-invalid': submitted && f.CIN.errors }" required>
+              </mat-form-field>
+
+
+
+              <mat-form-field appearance="fill" class="col-6">
+                <mat-label>Region</mat-label>
+                <mat-select formControlName="region" required>
+                  <mat-option *ngFor="let region of regions" [value]="region">
+                    {{ region }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+
+              <mat-form-field class="col-12">
+                <mat-label>Email</mat-label>
+                <input type="email" matInput formControlName="email" placeholder="Ex. pat@example.com" required>
+              </mat-form-field>
+
+
+
+              <div class=" col-6" ngx-dropzone [accept]="'image/*'" (change)="onSelectCarteIdRecto($event)">
+                <ngx-dropzone-label>
+                  <div>
+                    <h2>Votre carte d'identité nationale recto</h2>
+                  </div>
+                </ngx-dropzone-label>
+                <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of carteIdRecto" [file]="f"
+                  [removable]="true" (removed)="onRemoveCarteIdRecto(f)">
+                  <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                </ngx-dropzone-image-preview>
+              </div>
+
+              <div class=" col-6" ngx-dropzone [accept]="'image/*'" (change)="onSelectCarteIdVerso($event)">
+                <ngx-dropzone-label>
+                  <div>
+                    <h2>Votre carte d'identité nationale verso</h2>
+                  </div>
+                </ngx-dropzone-label>
+                <ngx-dropzone-image-preview ngProjectAs="ngx-dropzone-preview" *ngFor="let f of carteIdVerso" [file]="f"
+                  [removable]="true" (removed)="onRemoveCarteIdVerso(f)">
+                  <ngx-dropzone-label>{{ f.name }} ({{ f.type }})</ngx-dropzone-label>
+                </ngx-dropzone-image-preview>
+              </div>
+            </div>
+
+
+            <div class="text-center m-3 ">
+              <button type="submit" class="btn btn-primary mr-2"
+                [disabled]="registerForm.invalid || !carteIdRecto.length  || !carteIdVerso.length ">Register</button>
+              <button class="btn btn-secondary mr-1" type="reset" (click)="onReset()">Cancel</button>
+              <button class="btn btn-secondary mr-1" matStepperNext [disabled]="!isValidVoter">Next</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </mat-step>
+
+    <mat-step label="Vote" [editable]="false">
+      <div class="card m-3 ">
+        <h5 class="card-header">Vote</h5>
+        <div class="card-body ">
+          <div class="form-row">
+            <div class="row  ">
+              <mat-form-field class=" mat-form-field-center col-12">
+                <mat-label>VoterId</mat-label>
+                <input matInput type="text" placeholder="Votre voterId" name="voterId" [(ngModel)]="voterId" required>
+              </mat-form-field>
+            </div>
+            <div class="text-center m-3 ">
+              <button class="btn btn-primary mr-2" [disabled]="!voterId.length">Envoyer </button>
+            </div>
+          </div>
+
+          <mat-radio-group aria-label="Select an option">
+            <div class="row">
+              <div class="col-md-6 col-lg-6">
+                <mat-card>
+                  <mat-card-header>
+                    <div mat-card-avatar class="example-header-image"></div>
+                    <mat-card-title>Shiba Inu</mat-card-title>
+                    <mat-card-subtitle>Union nationale des forces populaires</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>
+                      Né d'une scission avec l'Istiqlal, il donna naissance après au parti socialiste USFP. Il a boycotté toutes les élections depuis 1972, après le décès de son chef Abdallah Ibrahim en 2005. De nos jours, il n'enregistre aucune activité politique.
+                    </p>
+                  </mat-card-content>
+                  <mat-card-actions>
+                    <mat-radio-button value="1">Voter pour ce parti</mat-radio-button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+              <div class="col-md-6 col-lg-6">
+                <mat-card>
+                  <mat-card-header>
+                    <div mat-card-avatar class="example-header-image"></div>
+                    <mat-card-title>Shiba Inu</mat-card-title>
+                    <mat-card-subtitle>Mouvement populaire</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>
+                      Parti créé par le caïd berbère Mahjoubi Aherdane avec l'aide du docteur Abdelkrim El Khatib.
+                    </p>
+                  </mat-card-content>
+                  <mat-card-actions>
+                    <mat-radio-button value="2">Voter pour ce parti</mat-radio-button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+
+              <div class="col-md-6 col-lg-6">
+                <mat-card>
+                  <mat-card-header>
+                    <div mat-card-avatar class="example-header-image"></div>
+                    <mat-card-title>Shiba Inu</mat-card-title>
+                    <mat-card-subtitle>Parti démocratique de l'indépendance</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>
+                      Créé en 1946, ce parti a succédé à Al-Haraqua al-Quawmiya, mais est quasi absent de la scène politique d'aujourd'hui.
+                    </p>
+                  </mat-card-content>
+                  <mat-card-actions>
+                    <mat-radio-button value="3">Voter pour ce parti</mat-radio-button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+
+              <div class="col-md-6 col-lg-6">
+                <mat-card>
+                  <mat-card-header>
+                    <div mat-card-avatar class="example-header-image"></div>
+                    <mat-card-title>KHADIM Meriem</mat-card-title>
+                    <mat-card-subtitle>Parti de l'Istiqlal</mat-card-subtitle>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <p>
+                      Parti conservateur, symbole du mouvement national marocain de la première moitié du xxe siècle.                    </p>
+                  </mat-card-content>
+                  <mat-card-actions>
+                    <mat-radio-button value="4">Voter pour ce parti</mat-radio-button>
+                  </mat-card-actions>
+                </mat-card>
+              </div>
+            </div>
+          </mat-radio-group>
+          <div class="text-center m-3 ">
+            <button class="btn btn-primary mr-2" [disabled]="!voterId.length">Envoyer </button>
+          </div>
+        </div>
+      </div>
+    </mat-step>
+    
+    <mat-step label="Terminer" [editable]="false">
+      You are now done.
+
+    </mat-step>
+
+  </mat-horizontal-stepper>
+</div>

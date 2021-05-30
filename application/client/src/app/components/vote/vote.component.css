@@ -1,0 +1,26 @@
+* {
+  font-family: Lato;
+}
+
+.text-center {
+	display: flex;
+	justify-content: center;
+	
+}
+.mat-form-field-center {
+	display: flex;
+	justify-content: center;
+	
+}
+.text-center button {
+	margin: 1em;
+}
+
+::ng-deep .mat-horizontal-stepper-header{
+    pointer-events: none !important;
+}
+
+mat-horizontal-stepper {
+	background-color:var( --main-bg-color  );
+}
+
